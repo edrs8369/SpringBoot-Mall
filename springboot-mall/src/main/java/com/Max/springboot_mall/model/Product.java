@@ -1,12 +1,14 @@
 package com.Max.springboot_mall.model;
 
+import com.Max.springboot_mall.constant.ProductCategory;
+
 import java.util.Date;
 
 public class Product {
 
     private Integer productId;
     private String productName;
-    private String category;
+    private ProductCategory category;
     private String imageUrl;
     private Integer price;
     private Integer stock;
@@ -17,7 +19,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(Integer productId, String productName, String category, String imageUrl, Integer price, Integer stock, String description, Date createdDate, Date lastModifiedDate) {
+    public Product(Integer productId, String productName, ProductCategory category, String imageUrl, Integer price, Integer stock, String description, Date createdDate, Date lastModifiedDate) {
         this.productId = productId;
         this.productName = productName;
         this.category = category;
@@ -45,11 +47,11 @@ public class Product {
         this.productName = productName;
     }
 
-    public String getCategory() {
+    public ProductCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(ProductCategory category) {
         this.category = category;
     }
 
