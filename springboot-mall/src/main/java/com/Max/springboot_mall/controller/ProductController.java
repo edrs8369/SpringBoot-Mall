@@ -1,13 +1,13 @@
 package com.Max.springboot_mall.controller;
 
+import com.Max.springboot_mall.dto.ProductRequest;
 import com.Max.springboot_mall.model.Product;
 import com.Max.springboot_mall.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ProductController {
@@ -27,5 +27,16 @@ public class ProductController {
             //也就是 HTTP 回應只有狀態碼，沒有內容
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @PostMapping("/products")
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest){
+        //創建商品在sql上，並返回productId供查詢數據
+        Integer productId = productService.createProduct(productRequest);
+
+        Product product = productService.getProductById(productId);
+
+        //把 product 物件轉成 JSON 放在回應的正文裡。
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 }
