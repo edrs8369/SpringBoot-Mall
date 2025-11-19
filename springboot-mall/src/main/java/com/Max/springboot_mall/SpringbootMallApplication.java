@@ -1,4 +1,4 @@
-package com.Max.springboot_mall;
+   package com.Max.springboot_mall;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -4,6 +4,7 @@ import com.Max.springboot_mall.dao.ProductDao;
 import com.Max.springboot_mall.dto.ProductRequest;
 import com.Max.springboot_mall.model.Product;
 import com.Max.springboot_mall.rowmapper.ProductRowMapper;
+import jakarta.websocket.OnClose;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -46,13 +47,13 @@ public class ProductDaoImpl implements ProductDao {
 
         String sql = "INSERT INTO product (product_name, category, image_url, price, stock, " +
                 "description, created_date, last_modified_date) " +
-                "VALUES (:productName, :category, :image_url, :price, :stock, :description, " +
+                "VALUES (:productName, :category, :imageUrl, :price, :stock, :description, " +
                 ":createdDate, :lastModifiedDate)";
 
         Map<String, Object> map = new HashMap<>();
         map.put("productName", productRequest.getProductName());
         map.put("category", productRequest.getCategory().toString());
-        map.put("image_url", productRequest.getImageUrl());
+        map.put("imageUrl", productRequest.getImageUrl());
         map.put("price", productRequest.getPrice());
         map.put("stock", productRequest.getStock());
         map.put("description", productRequest.getDescription());
@@ -68,5 +69,28 @@ public class ProductDaoImpl implements ProductDao {
         int productId = keyHolder.getKey().intValue();
 
         return productId;
+    }
+
+    @Override
+    public void updateProduct(Integer productId, ProductRequest productRequest){
+
+        String sql = "UPDATE product SET product_name = :productName, category = :category," +
+                " image_url = :imageUrl, price = :price, stock = :stock, description = :description" +
+                " ,last_modified_date = :lastModifiedDate WHERE product_id = :productId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("productId", productId);
+
+        map.put("productName", productRequest.getProductName());
+        map.put("category", productRequest.getCategory().toString());
+        map.put("imageUrl", productRequest.getImageUrl());
+        map.put("price", productRequest.getPrice());
+        map.put("stock", productRequest.getStock());
+        map.put("description", productRequest.getDescription());
+
+        //只有修改日期要修改
+        map.put("lastModifiedDate", new Date());
+
+        namedParameterJdbcTemplate.update(sql, map);
     }
 }
