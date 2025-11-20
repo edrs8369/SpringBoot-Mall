@@ -1,6 +1,7 @@
 package com.Max.springboot_mall.service;
 
 import com.Max.springboot_mall.constant.ProductCategory;
+import com.Max.springboot_mall.dto.ProductQueryParams;
 import com.Max.springboot_mall.dto.ProductRequest;
 import com.Max.springboot_mall.model.Product;
 
@@ -16,5 +17,5 @@ public interface ProductService {
 
     void deleteProductById(Integer productId);
 
-    List<Product> getProducts(ProductCategory category, String search);
+    List<Product> getProducts(ProductQueryParams productQueryParams);
 }
