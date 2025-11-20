@@ -1,10 +1,10 @@
 package com.Max.springboot_mall.dao.Impl;
 
+import com.Max.springboot_mall.constant.ProductCategory;
 import com.Max.springboot_mall.dao.ProductDao;
 import com.Max.springboot_mall.dto.ProductRequest;
 import com.Max.springboot_mall.model.Product;
 import com.Max.springboot_mall.rowmapper.ProductRowMapper;
-import jakarta.websocket.OnClose;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,12 +24,25 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts(ProductCategory category, String search) {
 
+        //1=1不會造成任何影響只是為了後須拼接方便
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, description, created_date, last_modified_date " +
-                "FROM product ";
+                "FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>();
+
+        if(category != null){
+            //一定要預留空白健，避免跟前面的查詢條件黏在一起
+            sql = sql + " AND category = :category";
+            //用name是因為enum類型的關係，要轉換成字串
+            map.put("category", category.name());
+        }
+
+        if(search != null){
+            sql = sql + " AND product_name LIKE :search";
+            map.put("search", "%" + search + "%");
+        }
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 

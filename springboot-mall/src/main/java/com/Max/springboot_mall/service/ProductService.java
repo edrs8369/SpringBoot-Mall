@@ -1,8 +1,8 @@
 package com.Max.springboot_mall.service;
 
+import com.Max.springboot_mall.constant.ProductCategory;
 import com.Max.springboot_mall.dto.ProductRequest;
 import com.Max.springboot_mall.model.Product;
-import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ public interface ProductService {
 
     void deleteProductById(Integer productId);
 
-    List<Product> getProducts();
+    List<Product> getProducts(ProductCategory category, String search);
 }

@@ -1,5 +1,6 @@
 package com.Max.springboot_mall.service.Impl;
 
+import com.Max.springboot_mall.constant.ProductCategory;
 import com.Max.springboot_mall.dao.ProductDao;
 import com.Max.springboot_mall.dto.ProductRequest;
 import com.Max.springboot_mall.model.Product;
@@ -36,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts() {
-        return productDao.getProducts();
+    public List<Product> getProducts(ProductCategory category, String search) {
+        return productDao.getProducts(category, search);
     }
 }
