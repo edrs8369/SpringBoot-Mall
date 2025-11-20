@@ -7,6 +7,8 @@ import com.Max.springboot_mall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -31,5 +33,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProductById(Integer productId) {
         productDao.deleteProductById(productId);
+    }
+
+    @Override
+    public List<Product> getProducts() {
+        return productDao.getProducts();
     }
 }

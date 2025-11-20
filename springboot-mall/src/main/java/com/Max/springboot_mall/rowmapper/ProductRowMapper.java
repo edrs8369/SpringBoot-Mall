@@ -16,6 +16,7 @@ public class ProductRowMapper implements RowMapper<Product> {
         Integer productId = rs.getInt("product_id");
         String productName = rs.getString("product_name");
 
+        //把String轉換成ProductCategory類型的對象
         //ProductCategory category = ProductCategory.valueOf(rs.getString("category"));
         String categoryStr = rs.getString("category");
         ProductCategory category = ProductCategory.valueOf(categoryStr);
