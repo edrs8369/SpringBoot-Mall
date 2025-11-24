@@ -1,11 +1,18 @@
 package com.Max.springboot_mall.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 public class User {
 
     private Integer userId;
     private String email;
+
+    //當spring boot在轉換User Object為json格式的時候，會去忽略password變數，所以不會顯示他
+    @JsonIgnore
     private String password;
     private Date createdDate;
     private Date lastModifiedDate;
