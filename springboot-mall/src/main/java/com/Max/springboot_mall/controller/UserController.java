@@ -1,5 +1,6 @@
 package com.Max.springboot_mall.controller;
 
+import com.Max.springboot_mall.dto.UserLoginRequest;
 import com.Max.springboot_mall.dto.UserRegisterRequest;
 import com.Max.springboot_mall.model.User;
 import com.Max.springboot_mall.service.UserService;
@@ -25,5 +26,13 @@ public class UserController {
         User user = userService.getUserById(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @PostMapping("/users/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest){
+
+        User user = userService.login(userLoginRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }
