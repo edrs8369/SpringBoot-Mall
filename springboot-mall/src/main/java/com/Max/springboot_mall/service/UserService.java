@@ -12,5 +12,5 @@ public interface UserService {
 
     User getUserById(Integer userId);
 
-    User login(@Valid UserLoginRequest userLoginRequest);
+    User login(UserLoginRequest userLoginRequest);
 }
