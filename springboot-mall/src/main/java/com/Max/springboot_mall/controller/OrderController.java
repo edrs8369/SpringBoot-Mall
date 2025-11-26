@@ -2,6 +2,7 @@ package com.Max.springboot_mall.controller;
 
 import com.Max.springboot_mall.dto.CreateOrderRequest;
 import com.Max.springboot_mall.model.Order;
+import com.Max.springboot_mall.model.OrderItem;
 import com.Max.springboot_mall.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class OrderController {
 
         Integer orderId = orderService.createOrder(userId, createOrderRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
+        Order order = orderService.getOrderById(orderId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 }

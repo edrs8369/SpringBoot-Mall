@@ -1,7 +1,10 @@
 package com.Max.springboot_mall.dao.Impl;
 
 import com.Max.springboot_mall.dao.OrderDao;
+import com.Max.springboot_mall.model.Order;
 import com.Max.springboot_mall.model.OrderItem;
+import com.Max.springboot_mall.rowmapper.OrderItemRowMapper;
+import com.Max.springboot_mall.rowmapper.OrderRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -77,5 +80,40 @@ public class OrderDaoImpl implements OrderDao {
         }
 
         namedParameterJdbcTemplate.batchUpdate(sql, parameterSources);
+    }
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date " +
+                "FROM `order` WHERE order_id = :orderId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", orderId);
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        if(orderList.size() > 0){
+            return orderList.get(0);
+        } else {
+            return null;
+        }
+
+    }
+
+    @Override
+    public List<OrderItem> getOrderItemById(Integer orderId) {
+
+        //取得orderItem時之所以要取得商品資訊是因為，前端在呈現訂單中的購買商品時，一定不是呈現productId給使用者，一定是會去呈現
+        //商品的名稱，及搭配上商品的url圖片
+        String sql = "SELECT oi.order_item_id, oi.order_id, oi.product_id, oi.quantity, oi.amount, p.product_name" +
+                " ,p.image_url FROM order_item as oi LEFT JOIN product as p on oi.product_id = p.product_id " +
+                "WHERE oi.order_id = :orderId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", orderId);
+
+        List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
+
+        return orderItemList;
     }
 }

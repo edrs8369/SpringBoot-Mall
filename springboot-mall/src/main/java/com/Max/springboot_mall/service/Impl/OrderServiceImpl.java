@@ -4,6 +4,7 @@ import com.Max.springboot_mall.dao.OrderDao;
 import com.Max.springboot_mall.dao.ProductDao;
 import com.Max.springboot_mall.dto.BuyItem;
 import com.Max.springboot_mall.dto.CreateOrderRequest;
+import com.Max.springboot_mall.model.Order;
 import com.Max.springboot_mall.model.OrderItem;
 import com.Max.springboot_mall.model.Product;
 import com.Max.springboot_mall.service.OrderService;
@@ -56,5 +57,18 @@ public class OrderServiceImpl implements OrderService {
         orderDao.createOrderItems(orderId, orderItemList);
 
         return orderId;
+    }
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+
+        //分別取得兩張表中的數據
+        Order order = orderDao.getOrderById(orderId);
+
+        List<OrderItem> orderItemList = orderDao.getOrderItemById(orderId);
+
+        order.setOrderItemList(orderItemList);
+
+        return order;
     }
 }
