@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Date;
 
 public class OrderRowMapper implements RowMapper<Order> {
@@ -23,7 +22,7 @@ public class OrderRowMapper implements RowMapper<Order> {
         order.setUserId(userId);
         order.setTotalAmount(totalAmount);
         order.setCreatedDate(createdDate);
-
+        order.setLastModifiedDate(lastModifiedDate);
 
         return order;
     }

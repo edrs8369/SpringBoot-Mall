@@ -1,6 +1,7 @@
 package com.Max.springboot_mall.dao.Impl;
 
 import com.Max.springboot_mall.dao.OrderDao;
+import com.Max.springboot_mall.dto.OrderQueryParams;
 import com.Max.springboot_mall.model.Order;
 import com.Max.springboot_mall.model.OrderItem;
 import com.Max.springboot_mall.rowmapper.OrderItemRowMapper;
@@ -101,7 +102,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<OrderItem> getOrderItemById(Integer orderId) {
+    public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
 
         //取得orderItem時之所以要取得商品資訊是因為，前端在呈現訂單中的購買商品時，一定不是呈現productId給使用者，一定是會去呈現
         //商品的名稱，及搭配上商品的url圖片
@@ -115,5 +116,51 @@ public class OrderDaoImpl implements OrderDao {
         List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
 
         return orderItemList;
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+
+        String sql = "SELECT count(*) FROM `order` WHERE 1 = 1";
+        Map<String, Object> map = new HashMap<>();
+
+        //查詢條件
+        sql = addFilteringSql(sql ,map, orderQueryParams);
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return total;
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date FROM `order` WHERE 1 = 1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        //查詢條件
+        sql = addFilteringSql(sql, map, orderQueryParams);
+
+        //排序
+        //希望最新的可以排在最前面
+        sql = sql + " ORDER BY created_date DESC";
+
+        //分頁
+        sql = sql + " LIMIT :limit OFFSET :offset";
+        map.put("limit",  orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        return orderList;
+    }
+
+    private String addFilteringSql(String sql, Map<String, Object> map, OrderQueryParams orderQueryParams) {
+
+            if(orderQueryParams.getUserId() != null){
+                sql = sql + " AND user_id = :userId";
+                map.put("userId", orderQueryParams.getUserId());
+            }
+
+            return sql;
     }
 }
