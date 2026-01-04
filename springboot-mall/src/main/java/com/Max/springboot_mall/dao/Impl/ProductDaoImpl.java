@@ -132,24 +132,55 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public void updateProduct(Integer productId, ProductRequest productRequest){
 
-        String sql = "UPDATE product SET product_name = :productName, category = :category," +
-                " image_url = :imageUrl, price = :price, stock = :stock, description = :description" +
-                " ,last_modified_date = :lastModifiedDate WHERE product_id = :productId";
+        StringBuilder sql = new StringBuilder("UPDATE product SET ");
 
         Map<String, Object> map = new HashMap<>();
-        map.put("productId", productId);
 
-        map.put("productName", productRequest.getProductName());
-        map.put("category", productRequest.getCategory().toString());
-        map.put("imageUrl", productRequest.getImageUrl());
-        map.put("price", productRequest.getPrice());
-        map.put("stock", productRequest.getStock());
-        map.put("description", productRequest.getDescription());
+        String productName = productRequest.getProductName();
+        if(productName != null && !productName.isEmpty()){
+            sql.append("product_name = :productName, ");
+            map.put("productName", productName);
+        }
 
+        ProductCategory category = productRequest.getCategory();
+        if(category != null){
+            sql.append("category = :category, ");
+            map.put("category", category.toString());
+        }
+
+        String imageUrl = productRequest.getImageUrl();
+        if(imageUrl != null && !imageUrl.isEmpty()){
+            sql.append("image_url = :imageUrl, ");
+            map.put("imageUrl", imageUrl);
+        }
+
+        Integer price = productRequest.getPrice();
+        if(price != null){
+            sql.append("price = :price, ");
+            map.put("price", price);
+        }
+
+        Integer stock = productRequest.getStock();
+        if(stock != null){
+            sql.append("stock = :stock, ");
+            map.put("stock", stock);
+        }
+
+        String description = productRequest.getDescription();
+        if(description != null && !description.isEmpty()){
+            sql.append("description = :description, ");
+            map.put("description", description);
+        }
+
+
+        sql.append("last_modified_date = :lastModifiedDate ");
         //只有修改日期要修改
         map.put("lastModifiedDate", new Date());
 
-        namedParameterJdbcTemplate.update(sql, map);
+        sql.append("WHERE product_id = :productId");
+        map.put("productId", productId);
+
+        namedParameterJdbcTemplate.update(sql.toString(), map);
     }
 
     @Override
@@ -176,7 +207,7 @@ public class ProductDaoImpl implements ProductDao {
             map.put("category", category.name());
         }
 
-        if(search != null){
+        if(search != null && !search.isEmpty()){
             sql = sql + " AND product_name LIKE :search";
             map.put("search", "%" + search + "%");
         }

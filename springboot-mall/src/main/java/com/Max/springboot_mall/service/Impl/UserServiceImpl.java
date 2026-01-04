@@ -5,6 +5,7 @@ import com.Max.springboot_mall.dto.UserLoginRequest;
 import com.Max.springboot_mall.dto.UserRegisterRequest;
 import com.Max.springboot_mall.model.User;
 import com.Max.springboot_mall.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
-
-    private final static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserDao userDao;
@@ -28,9 +28,9 @@ public class UserServiceImpl implements UserService {
         User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
 
         if(user != null){
-            //{}可用來放參數
-            log.warn("該 email {} 已經被 {} 註冊", userRegisterRequest.getEmail(), "Judy");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "該 email: "+ userRegisterRequest.getEmail() + " 已經被註冊");
         }
 
         //使用MD5 生成密碼雜湊值
@@ -52,8 +52,8 @@ public class UserServiceImpl implements UserService {
 
         //檢查帳號是否註冊
         if(user == null){
-            log.warn("該 email {} 尚未註冊", userLoginRequest.getEmail());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                              "該 email: " + userLoginRequest.getEmail() + "尚未註冊");
         }
 
         //使用MD5 生成密碼的雜湊值
@@ -63,8 +63,8 @@ public class UserServiceImpl implements UserService {
         if(user.getPassword().equals(hashedPassword)){
             return user;
         } else {
-            log.warn("email {} 的密碼不正確", userLoginRequest.getEmail());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                              "email: " + userLoginRequest.getEmail() + " 的密碼不正確");
         }
     }
 }

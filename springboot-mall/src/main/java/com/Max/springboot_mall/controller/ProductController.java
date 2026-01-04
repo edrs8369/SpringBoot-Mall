@@ -9,6 +9,7 @@ import com.Max.springboot_mall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @Validated
 @RestController
 public class ProductController {
@@ -25,26 +27,9 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<Page<Product>> getProducts(
-            //查詢條件 Filtering
-            @RequestParam(required = false) ProductCategory category,
-            @RequestParam(required = false) String search,
+    public ResponseEntity<Page<Product>> getProducts(@Valid ProductQueryParams productQueryParams){
 
-            //排序 Sorting
-            @RequestParam(defaultValue = "created_date")  String orderBy,
-            @RequestParam(defaultValue = "desc") String sort,
-
-            //分頁 Pagination
-            @RequestParam (defaultValue = "5") @Max(1000) @Min(0) Integer limit,
-            @RequestParam (defaultValue = "0") @Min(0) Integer offset
-            ){
-        ProductQueryParams productQueryParams = new ProductQueryParams();
-        productQueryParams.setCategory(category);
-        productQueryParams.setSearch(search);
-        productQueryParams.setOrderBy(orderBy);
-        productQueryParams.setSort(sort);
-        productQueryParams.setLimit(limit);
-        productQueryParams.setOffset(offset);
+        log.info("條件分頁查詢: {}", productQueryParams);
 
         //取得product list
         List<Product> productList = productService.getProducts(productQueryParams);
@@ -54,8 +39,8 @@ public class ProductController {
 
         //分頁
         Page<Product> page= new Page<>();
-        page.setLimit(limit);
-        page.setOffset(offset);
+        page.setLimit(productQueryParams.getLimit());
+        page.setOffset(productQueryParams.getOffset());
         page.setTotal(total);
         page.setResult(productList);
 
@@ -65,19 +50,18 @@ public class ProductController {
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable Integer productId) {
 
+        log.info("查詢商品: productId = {}", productId);
+
         Product product = productService.getProductById(productId);
 
-        if(product != null){
-            return ResponseEntity.status(HttpStatus.OK).body(product);
-        } else{
-            //.build() 代表 不返回任何 body
-            //也就是 HTTP 回應只有狀態碼，沒有內容
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest){
+
+        log.info("創建商品: {}", productRequest);
+
         //創建商品在sql上，並返回productId供查詢數據
         Integer productId = productService.createProduct(productRequest);
 
@@ -89,14 +73,9 @@ public class ProductController {
 
     @PutMapping("/products/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
-                                                 @RequestBody @Valid ProductRequest productRequest){
+                                                 @RequestBody ProductRequest productRequest){
 
-        //檢查product是否存在
-        Product product = productService.getProductById(productId);
-
-        if(product == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        log.info("更新商品: {}", productRequest);
 
         //修改商品的數據
         productService.updateProduct(productId, productRequest);
@@ -108,6 +87,9 @@ public class ProductController {
 
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer productId){
+
+        log.info("刪除商品: {}", productId);
+
         productService.deleteProductById(productId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -11,8 +11,6 @@ import com.Max.springboot_mall.model.OrderItem;
 import com.Max.springboot_mall.model.Product;
 import com.Max.springboot_mall.model.User;
 import com.Max.springboot_mall.service.OrderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,8 +32,6 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserDao userDao;
 
-    private final static Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
-
     @Transactional
     @Override
     public Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
@@ -44,8 +40,8 @@ public class OrderServiceImpl implements OrderService {
         User user = userDao.getUserById(userId);
 
         if(user == null){
-            log.warn("改 userId {} 不存在", userId);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND
+                    , "該 userId " + userId + " 不存在");
         }
 
         int totalAmount = 0;
@@ -56,12 +52,13 @@ public class OrderServiceImpl implements OrderService {
 
             // 檢查product是否存在，庫存是否足夠
             if(product == null){
-                log.warn("商品 {} 不存在", buyItem.getProductId());
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND
+                        , "商品 " + buyItem.getProductId() + " 不存在");
             } else if(product.getStock() < buyItem.getQuantity()){
-                log.warn("商品 {} 庫存數量不足，無法購買。剩餘庫存 {}，欲購買數量 {}",
-                        product.getProductId(), product.getStock(), buyItem.getQuantity());
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "商品 " + product.getProductId() + " 庫存數量不足，無法購買。" +
+                                "剩餘庫存 " + product.getStock() + " " +
+                                "，欲購買數量 " + buyItem.getQuantity());
             }
 
             // 扣除商品庫存
@@ -97,6 +94,10 @@ public class OrderServiceImpl implements OrderService {
 
         //分別取得兩張表中的數據
         Order order = orderDao.getOrderById(orderId);
+
+        if (order == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "訂單不存在: " + orderId);
+        }
 
         List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
 

@@ -9,6 +9,7 @@ import com.Max.springboot_mall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 public class OrderController {
 
@@ -32,6 +34,8 @@ public class OrderController {
         orderQueryParams.setUserId(userId);
         orderQueryParams.setLimit(limit);
         orderQueryParams.setOffset(offset);
+
+        log.info("訂單查詢: {}", orderQueryParams);
 
         // 取得order list
         List<Order> orderList = orderService.getOrders(orderQueryParams);
@@ -51,6 +55,8 @@ public class OrderController {
     @PostMapping("/users/{userId}/orders")
     public ResponseEntity<?> createOrder(@PathVariable Integer userId,
                                          @RequestBody @Valid CreateOrderRequest createOrderRequest){
+
+        log.info("創建訂單: {}", createOrderRequest);
 
         Integer orderId = orderService.createOrder(userId, createOrderRequest);
 

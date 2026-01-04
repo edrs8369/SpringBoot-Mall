@@ -29,4 +29,13 @@ public class OrderQueryParams {
     public void setOffset(Integer offset) {
         this.offset = offset;
     }
+
+    @Override
+    public String toString() {
+        return "OrderQueryParams{" +
+                "userId=" + userId +
+                ", limit=" + limit +
+                ", offset=" + offset +
+                '}';
+    }
 }

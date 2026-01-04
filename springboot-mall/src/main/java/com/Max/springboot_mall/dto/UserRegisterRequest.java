@@ -7,12 +7,12 @@ import jakarta.validation.constraints.NotNull;
 public class UserRegisterRequest {
 
     //除了不能為null之外也不能為空字串
-    @NotBlank
     //檢查是否為email格式
-    @Email
+    @NotBlank(message = "email不得為空")
+    @Email(message = "email格式不正確")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "密碼不得為空")
     private String password;
 
     public String getEmail() {
@@ -29,5 +29,13 @@ public class UserRegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRegisterRequest{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

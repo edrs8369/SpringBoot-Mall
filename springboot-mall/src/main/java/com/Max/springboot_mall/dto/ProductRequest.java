@@ -1,25 +1,29 @@
 package com.Max.springboot_mall.dto;
 
 import com.Max.springboot_mall.constant.ProductCategory;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class ProductRequest {
 
     //productId，資料庫會自動生成，不需要前端傳過來，刪掉
 
-    @NotNull
+    @NotBlank(message = "productName不得為空")
     private String productName;
 
-    @NotNull
+    @NotNull(message = "category不得為空")
     private ProductCategory category;
 
-    @NotNull
+    @NotBlank(message = "imageUrl不得為空")
     private String imageUrl;
 
-    @NotNull
+    @NotNull(message = "price不得為空")
+    @Min(value = 1, message = "price不得小於1")
     private Integer price;
 
-    @NotNull
+    @NotNull(message = "stock不得為空")
+    @Min(value = 1, message = "stock不得小於1")
     private Integer stock;
 
     //描述，在mySql設定上是允許為空的
@@ -73,5 +77,17 @@ public class ProductRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductRequest{" +
+                "productName='" + productName + '\'' +
+                ", category=" + category +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

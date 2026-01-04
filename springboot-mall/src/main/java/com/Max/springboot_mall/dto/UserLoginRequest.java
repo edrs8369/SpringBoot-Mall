@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 
 public class UserLoginRequest {
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "email不得為空")
+    @Email(message = "email格式不正確")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "密碼不得為空")
     private String password;
 
     public String getEmail() {
@@ -26,5 +26,13 @@ public class UserLoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "UserLoginRequest{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }
