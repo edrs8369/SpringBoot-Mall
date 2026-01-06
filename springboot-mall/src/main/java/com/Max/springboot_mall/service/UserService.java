@@ -1,5 +1,6 @@
 package com.Max.springboot_mall.service;
 
+import com.Max.springboot_mall.dto.LoginInfo;
 import com.Max.springboot_mall.dto.UserLoginRequest;
 import com.Max.springboot_mall.dto.UserRegisterRequest;
 import com.Max.springboot_mall.model.User;
@@ -12,5 +13,5 @@ public interface UserService {
 
     User getUserById(Integer userId);
 
-    User login(UserLoginRequest userLoginRequest);
+    LoginInfo login(UserLoginRequest userLoginRequest);
 }

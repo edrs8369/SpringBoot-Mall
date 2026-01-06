@@ -1,5 +1,6 @@
 package com.Max.springboot_mall.controller;
 
+import com.Max.springboot_mall.dto.LoginInfo;
 import com.Max.springboot_mall.dto.UserLoginRequest;
 import com.Max.springboot_mall.dto.UserRegisterRequest;
 import com.Max.springboot_mall.model.User;
@@ -33,12 +34,12 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest){
+    public ResponseEntity<LoginInfo> login(@RequestBody @Valid UserLoginRequest userLoginRequest){
 
         log.info("登入請求: email = {}", userLoginRequest.getEmail());
 
-        User user = userService.login(userLoginRequest);
+        LoginInfo loginInfo = userService.login(userLoginRequest);
 
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.status(HttpStatus.OK).body(loginInfo);
     }
 }

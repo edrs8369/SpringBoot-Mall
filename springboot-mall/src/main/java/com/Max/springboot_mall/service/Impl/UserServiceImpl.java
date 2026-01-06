@@ -1,18 +1,21 @@
 package com.Max.springboot_mall.service.Impl;
 
 import com.Max.springboot_mall.dao.UserDao;
+import com.Max.springboot_mall.dto.LoginInfo;
 import com.Max.springboot_mall.dto.UserLoginRequest;
 import com.Max.springboot_mall.dto.UserRegisterRequest;
 import com.Max.springboot_mall.model.User;
 import com.Max.springboot_mall.service.UserService;
+import com.Max.springboot_mall.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -47,7 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(UserLoginRequest userLoginRequest) {
+    public LoginInfo login(UserLoginRequest userLoginRequest) {
         User user = userDao.getUserByEmail(userLoginRequest.getEmail());
 
         //檢查帳號是否註冊
@@ -61,10 +64,17 @@ public class UserServiceImpl implements UserService {
 
         //比較密碼是否一致
         if(user.getPassword().equals(hashedPassword)){
-            return user;
+            //生成jwt令牌
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("user_id", user.getUserId());
+            claims.put("email", user.getEmail());
+            String jwtToken = JwtUtils.generateJwtToken(claims);
+            return new LoginInfo(user.getUserId(), user.getEmail(), jwtToken);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                                               "email: " + userLoginRequest.getEmail() + " 的密碼不正確");
         }
+
+
     }
 }
