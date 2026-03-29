@@ -87,7 +87,7 @@
 ## 🚀 專案啟動方式
 
 ```bash
-git clone https://github.com/你的帳號/你的專案.git
+git clone https://github.com/edrs8369/SpringBoot-Mall.git
 cd your-project
 mvn spring-boot:run
 ```
